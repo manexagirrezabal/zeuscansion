@@ -1,0 +1,17 @@
+#ENGLISH
+#controlled
+
+regex [BEFORECHANGE .o. VowChaBEF .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. ConChaBEF .o. AFTERCHANGE];
+
+regex [BEFORECHANGE .o. VowChaBEF .o. VowChaBEF .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. [[VowChaBEF .o. ConChaBEF] | [ConChaBEF .o. VowChaBEF]] .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. ConChaBEF .o. ConChaBEF .o. AFTERCHANGE];
+
+regex [BEFORECHANGE .o. VowChaAFT .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. ConChaAFT .o. AFTERCHANGE];
+
+regex [BEFORECHANGE .o. VowChaAFT .o. VowChaAFT .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. [[VowChaAFT .o. ConChaAFT] | [ConChaAFT .o. VowChaAFT]] .o. AFTERCHANGE];
+regex [BEFORECHANGE .o. ConChaAFT .o. ConChaAFT .o. AFTERCHANGE];
+
