@@ -5,7 +5,8 @@ source typeWord.script
 
 define onlyPrimaryStress1 %_ -> %- || %+ [? - %+]*  _ [? - %+]* %+;
 define onlyPrimaryStress2 %` -> %- || %+ [? - %+]* %' [? - %+]*  _ [? - %+]* %+;
-define onlyPrimaryStress onlyPrimaryStress1 .o. onlyPrimaryStress2 ;
+define onlyPrimaryStress3 %` -> %- || %+ [? - %+]* _ [? - %+]* %' [? - %+]* %+;
+define onlyPrimaryStress onlyPrimaryStress1 .o. onlyPrimaryStress2 .o. onlyPrimaryStress3 ;
 
 define cleanPron %` | %_ | %' -> %- || %+ [? - %+]* _ [? - %+]* %+;
 
