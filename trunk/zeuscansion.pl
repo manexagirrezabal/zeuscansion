@@ -60,6 +60,16 @@ $scorePerFeet = 1 if (defined($opts{f}));
 $additionalInformation = 1 if (defined($opts{a}));
 $eval = 1 if (defined($opts{e}));
 
+my %conf;
+
+open (CONF, "zeuscansion.conf") or die "I can not open the configuration file";
+while (<CONF>){
+    chomp;
+    my ($name, $value) = split /\s*\=\s*/, $_;
+    $conf{"$name"} = $value;
+}
+close (CONF);
+
 open (INFILE, $corpus) or die "I couldn't open the poem file";
 open2(*ReaderTokenizer, *WriterTokenizer, "flookup -i -x -b transducers/01tokenizer.fst");
 open2(*ReaderPrimary, *WriterPrimary, "flookup -i -x -b transducers/02primaryStep.fst");
@@ -67,7 +77,7 @@ open2(*ReaderPrimary2, *WriterPrimary2, "flookup -i -x -b transducers/02primaryS
 open2(*ReaderSecondary, *WriterSecondary, "flookup -i -x -b transducers/03secondaryStep.fst");
 open2(*ReaderClose, *WriterClose, "flookup -i -b -x -a transducers/closewordtest.fst");
 open2(*ReaderClean, *WriterClean, "flookup -i -b -x transducers/cleanAll.fst");
-open2(*ReaderPOS, *WriterPOS, "hunpos-tag ~/train/en_wsj.model");
+open2(*ReaderPOS, *WriterPOS, "hunpos-tag ".$conf{"HMM_POS_MODEL"});
 
 
 ############################################################################################
