@@ -1,0 +1,26 @@
+source loadPron.script
+
+source typeWord.script
+
+define polySylCW ?* %+ ?^>1 %+ CW ;
+
+define cleanPron1 ?* -> 0 || %+ _ %+ ;
+define cleanPron2 %+ -> 0 || %+ _ ;
+define cleanPron cleanPron1 .o. cleanPron2 ;
+
+define onlyPrimAndSecStress %_ -> %- || %+ [? - %+]* _ [? - %+]* %+;
+define onlyPrimaryStress1 %_ -> %- || %+ [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress2 %` -> %- || %+ [? - %+]* %' [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress onlyPrimaryStress1 .o. onlyPrimaryStress2 ;
+
+define polySylCWAction polySylCW .o. cleanPron .o. pron %+ CW .o. onlyPrimAndSecStress  ;
+
+define polySylFW ?* %+ ?^>1 %+ FW ;
+
+define polySylFWAction polySylFW .o. cleanPron .o. pron %+ FW .o. onlyPrimaryStress ;
+
+regex polySylCWAction .P. polySylFWAction .P. ?* ;
+
+down composition+----+NN
+
+save stack ../transducers/03secondaryStep.fst

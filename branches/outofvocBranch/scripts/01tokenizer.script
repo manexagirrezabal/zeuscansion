@@ -1,0 +1,23 @@
+#ENGLISH
+
+# tokenizer.script
+#define Boundary ["("|"\"|"."|","|{"}|";"|":"|"?"|"!"|"¿"|"¡"|"«"|"»"|"'"|"`"|")"|
+#                 "^"|"@"|"~"|"|"|"_"|"/"|"+"|"="|"&"|"$"|"€"|"£"|"¢"|"¥"|"#"|"*"|
+#                 "+"|"%"|" "|"-"+|"\u0009"];
+define Boundary ["("|"\"|"."|","|{"}|";"|":"|"?"|"!"|"¿"|"¡"|"«"|"»"|"`"|")"|
+                 "^"|"@"|"~"|"|"|"_"|"/"|"+"|"="|"&"|"$"|"€"|"£"|"¢"|"¥"|"#"|"*"|
+                 "+"|"%"|" "|"-"+|"\u0009"];
+
+define DIGIT [%0|1|2|3|4|5|6|7|8|9];
+define TOKENSYM "\u000a";
+define SPACE " "|"\u0009"|"\u000a"|"\u000d" ;
+define WordsCompounds [\Boundary+ ("_" \Boundary+)+];
+define Initials [\Boundary "."]+;
+define Numbers DIGIT+ [(%, DIGIT+)* (%. DIGIT+)];
+define Abbreviations @txt"tokenabbreviations.txt";
+define Tokenizer [WordsCompounds|Numbers|Abbreviations|Boundary|Initials] @-> ... TOKEN .o. 
+                 " " -> 0 .o. TOKEN+ @-> TOKEN .o. SPACE+ @-> 0 .o. TOKEN+ @-> "\u000a";
+define PREPRO "'" -> 0 .o. " "* -> 0 || .#. _;
+regex PREPRO .o. Tokenizer;
+save stack ../transducers/01tokenizer.fst
+

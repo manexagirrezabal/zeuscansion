@@ -1,0 +1,29 @@
+source loadPron.script
+
+source typeWord.script
+
+
+define onlyPrimaryStress1 %_ -> %- || %+ [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress2 %` -> %- || %+ [? - %+]* %' [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress3 %` -> %- || %+ [? - %+]* _ [? - %+]* %' [? - %+]* %+;
+define onlyPrimaryStress onlyPrimaryStress1 .o. onlyPrimaryStress2 .o. onlyPrimaryStress3 ;
+
+define cleanPron %` | %_ | %' -> %- || %+ [? - %+]* _ [? - %+]* %+;
+
+define pronCW pron %+ CW .o. onlyPrimaryStress ;
+define pronNonCW pron %+ ? ? (?) (?) .o. cleanPron ;
+
+define removeS s -> 0 || _ %+ ;
+
+define pronPluralW removeS .o. pron %+ N ? ( ? ) .o. onlyPrimaryStress ;
+
+regex pronCW .P. pronNonCW .P. pronPluralW ;# .P. ?*;
+
+
+down composition+NN
+down composition+CC
+down pardoned+VB
+down floors+NNS
+
+save stack ../transducers/02primaryStep.fst
+

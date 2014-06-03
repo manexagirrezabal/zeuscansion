@@ -1,0 +1,7 @@
+#ENGLISH
+
+#CONTENT WORDS
+define CW N ? ( ? ) | V ? ( ? ) | J ? ( ? ) | R B | R B R | R B S ; 
+
+#FUNCTION WORDS
+define FW I N | C C | P P | P P %$ | W P | W P %$ | P R P %$ ;
