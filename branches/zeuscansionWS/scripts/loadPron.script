@@ -1,0 +1,3 @@
+#read lexc ../dicts/newdic-ipa.lex
+read lexc ../dicts/pronDict.lex
+define pron ;

@@ -1,0 +1,71 @@
+
+define V [a|e|i|o|u|y];
+define C [b|c|d|f|g|h|j|k|l|m|n|p|q|r|s|t|v|w|x|z];
+
+#define DICT [{debate}|{dog}|{mouse}];
+define DICT @txt"../dicts/allWords.txt";
+
+##NOT CONTROLLED PART START
+define C2CcondManyBEF C -> C || .#. \%|*  _ ; #THIS CAN CHANGE SEVERAL CONSONANTS
+define C20condManyBEF C -> 0 || .#. \%|*  _ ;
+define 02CcondManyBEF 0 -> C || .#. \%|*  _ ;
+define V2VcondManyBEF V -> V || .#. \%|*  _ ;
+define V20condManyBEF V -> 0 || .#. \%|*  _ ;
+define 02VcondManyBEF 0 -> V || .#. \%|*  _ ;
+
+define ConChaManyBEF [C2CcondManyBEF | C20condManyBEF | 02CcondManyBEF] ;
+define VowChaManyBEF [V2VcondManyBEF | V20condManyBEF | 02VcondManyBEF] ;
+
+define C2CcondManyAFT C -> C ||   _ \%|* .#. ; #THIS CAN CHANGE SEVERAL CONSONANTS
+define C20condManyAFT C -> 0 ||   _ \%|* .#. ;
+define 02CcondManyAFT 0 -> C ||   _ \%|* .#. ;
+define V2VcondManyAFT V -> V ||   _ \%|* .#. ;
+define V20condManyAFT V -> 0 ||   _ \%|* .#. ;
+define 02VcondManyAFT 0 -> V ||   _ \%|* .#. ;
+
+define ConChaManyAFT [C2CcondManyAFT | C20condManyAFT | 02CcondManyAFT] ;
+define VowChaManyAFT [V2VcondManyAFT | V20condManyAFT | 02VcondManyAFT] ;
+##NOT CONTROLLED PART END
+
+
+##CONTROLLED PART START
+define C2CcondBEF ?* [C:C-?] ?* %| \%|*;
+define C20condBEF ?* [C:0] ?* %| \%|*;
+define 02CcondBEF ?* [0:C] ?* %| \%|*;
+define ConChaBEF [C2CcondBEF | C20condBEF | 02CcondBEF] ;
+
+define V2VcondBEF ?* [V:V-?] ?* %| \%|*;
+define V20condBEF ?* [V:0] ?* %| \%|*;
+define 02VcondBEF ?* [0:V] ?* %| \%|*;
+define VowChaBEF [V2VcondBEF | V20condBEF | 02VcondBEF];
+
+define C2CcondAFT \%|* %| ?* [C:C-?] ?*;
+define C20condAFT \%|* %| ?* [C:0] ?*;
+define 02CcondAFT \%|* %| ?* [0:C] ?*;
+define ConChaAFT [C2CcondAFT | C20condAFT | 02CcondAFT] ;
+
+define V2VcondAFT \%|* %| ?* [V:V-?] ?*;
+define V20condAFT \%|* %| ?* [V:0] ?*;
+define 02VcondAFT \%|* %| ?* [0:V] ?*;
+define VowChaAFT [V2VcondAFT | V20condAFT | 02VcondAFT];
+##CONTROLLED PART END
+
+
+define INSERTVERTICALBAR [..] @-> %| || _ (C) (V)+ C+ (V) .#. ;
+define CLEANVERTICALBAR %| -> 0;
+define VERTICALBARFILTER ~$%|;
+define CLEANFIRSTVERTICALBARS %| -> 0 || %| ?* _ ;
+
+define BEFORECHANGE VERTICALBARFILTER .o. INSERTVERTICALBAR .o. CLEANFIRSTVERTICALBARS;
+define AFTERCHANGE CLEANVERTICALBAR .o. DICT ;
+
+regex DICT ;
+
+source controlled.script
+#source notControlled.script
+
+
+#save stack ../transducers/closewordtest.fst
+
+#cat jabberwocky.txt | tr -t "[A-Z]" "[a-z]" | sed 's/[^a-z\ \\n]//g' | tr -s "\n" | flookup -ibx 01tokenizer.fst | tr -s "\n" | flookup -ia closewordtest.fst | tr -s "\n"
+

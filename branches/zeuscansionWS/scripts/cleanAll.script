@@ -1,0 +1,14 @@
+#ENGLISH
+
+
+define cleanUp1 ?* @> 0 || _ %+ [%' | %` | %- | %_]* %+ ;
+define cleanUp2 ?* @-> 0 || %+ [%' | %` | %- | %_]* %+ _ ;
+define cleanUp3 %+ -> 0 ;
+
+regex cleanUp1 .o. cleanUp2 .o. cleanUp3 ;
+
+
+down however+-'-+RB
+down to+-+TO
+
+save stack ../transducers/cleanAll.fst

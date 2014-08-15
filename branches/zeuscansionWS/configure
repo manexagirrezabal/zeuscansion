@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+check ("flookup");
+check ("foma");
+check ("hunpos-tag");
+print "\nEverything is OK!\n";
+
+sub check {
+  $name=shift();
+  if (! grep { -x "$_/$name"}split /:/,$ENV{PATH}) {
+    print "$name is not installed in the system!";
+    exit (-1);
+  }
+  else {
+    print "$name installed!\n";
+  }
+}
+
+
