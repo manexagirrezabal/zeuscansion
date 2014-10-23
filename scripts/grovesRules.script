@@ -1,0 +1,27 @@
+source loadPron.script
+
+source typeWord.script
+
+
+define onlyPrimaryStress1 %_ -> %- || %+ [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress2 %` -> %- || %+ [? - %+]* %' [? - %+]*  _ [? - %+]* %+;
+define onlyPrimaryStress3 %` -> %- || %+ [? - %+]* _ [? - %+]* %' [? - %+]* %+;
+define onlyPrimaryStress onlyPrimaryStress1 .o. onlyPrimaryStress2 .o. onlyPrimaryStress3 ;
+
+define primary2secondary %' -> %` ;
+define primary2unstressed %' -> %- ;
+define polySylFWCond ?* %+ ?^>1 %+ FW ; #Condition: If it is polysyllabic primaryStress2secondary, if it's not primaryStress2unstressed
+
+define pronCW pron %+ CW .o. onlyPrimaryStress1 ;
+define pronFW pron %+ FW .o. onlyPrimaryStress .o. [[polySylFWCond .o. primary2secondary] .P. primary2unstressed] ;
+
+regex pronCW .P. pronFW ;
+
+down composition+NN
+down composition+CC
+down pardoned+VB
+down floors+NNS
+down my+PRP$
+
+save stack ../transducers/grovesRules.fst
+exit

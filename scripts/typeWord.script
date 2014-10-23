@@ -1,7 +1,8 @@
 #ENGLISH
+#Information got from https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
 
 #CONTENT WORDS
-define CW N ? ( ? ) | V ? ( ? ) | J ? ( ? ) | R B | R B R | R B S ; 
+define CW J J | J J R | J J S | N N | N N S | N N P | N N P S | R B | R B R | R B S | V B | V B D | V B G | V B N | V B P | V B Z ;
 
 #FUNCTION WORDS
-define FW I N | C C | P P | P P %$ | W P | W P %$ | P R P %$ ;
+define FW C C | C D | D T | E X | I N | L S | M D | P D T | P O D | P R P | P R P %$ | R P | T O | U H | W D T | W P | W P %$ | W R B | F W | S Y M ;

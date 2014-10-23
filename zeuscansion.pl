@@ -8,11 +8,28 @@ use Getopt::Std;
 
 
 my %opts;
-getopts("c:e:psfnahv",\%opts);
+getopts("c:e:psfnahvS",\%opts);
+
+my $numericView = 0;
+my $stressView = 0;
+my $processView = 0;
+my $scorePerFeet = 0;
+my $additionalInformation = 0;
+my $eval = 0;
+my $silent = 0;
+my $corpus = $opts{c};
+
+$numericView = 1 if (defined($opts{n}));
+$stressView = 1 if (defined($opts{s}));
+$processView = 1 if (defined($opts{p}));
+$scorePerFeet = 1 if (defined($opts{f}));
+$additionalInformation = 1 if (defined($opts{a}));
+$eval = 1 if (defined($opts{e}));
+$silent = 1 if (defined($opts{S}));
 
 help() if (defined($opts{h}));
 version() if (defined($opts{v}));
-welcome();
+welcome() if ($silent==0);
 noInput() if (not defined($opts{c}));
 
 
@@ -45,20 +62,7 @@ my $diSylScore = 1.0; ##ADJUSTABLE PARAMETERS
 my $triSylScore = 1.5; ##ADJUSTABLE PARAMETERS
 my $tetraSylScore = 2.0; ##ADJUSTABLE PARAMETERS
 
-my $numericView = 0;
-my $stressView = 0;
-my $processView = 0;
-my $scorePerFeet = 0;
-my $additionalInformation = 0;
-my $eval = 0;
-my $corpus = $opts{c};
 
-$numericView = 1 if (defined($opts{n}));
-$stressView = 1 if (defined($opts{s}));
-$processView = 1 if (defined($opts{p}));
-$scorePerFeet = 1 if (defined($opts{f}));
-$additionalInformation = 1 if (defined($opts{a}));
-$eval = 1 if (defined($opts{e}));
 
 my %conf;
 
@@ -72,9 +76,9 @@ close (CONF);
 
 open (INFILE, $corpus) or die "I couldn't open the poem file";
 open2(*ReaderTokenizer, *WriterTokenizer, "flookup -i -x -b transducers/01tokenizer.fst");
-open2(*ReaderPrimary, *WriterPrimary, "flookup -i -x -b transducers/02primaryStep.fst");
-open2(*ReaderPrimary2, *WriterPrimary2, "flookup -i -x -b transducers/02primaryStep.fst");
-open2(*ReaderSecondary, *WriterSecondary, "flookup -i -x -b transducers/03secondaryStep.fst");
+open2(*ReaderPrimary, *WriterPrimary, "flookup -i -x -b transducers/grovesRules.fst");
+open2(*ReaderPrimary2, *WriterPrimary2, "flookup -i -x -b transducers/grovesRules.fst");
+#open2(*ReaderSecondary, *WriterSecondary, "flookup -i -x -b transducers/03secondaryStep.fst");
 open2(*ReaderClose, *WriterClose, "flookup -i -b -x -a transducers/closewordtest.fst");
 open2(*ReaderClean, *WriterClean, "flookup -i -b -x transducers/cleanAll.fst");
 open2(*ReaderPOS, *WriterPOS, "hunpos-tag ".$conf{"HMM_POS_MODEL"});
@@ -90,7 +94,7 @@ while (my $lerro = <INFILE>) {
 
 $wholeText =~ s/^\s*//;
 
-print "I've read the text!!\n";
+print "I've read the text!!\n" if ($silent==0);
 
 
 
@@ -112,8 +116,7 @@ while ((my $returnword = <ReaderTokenizer>) ne "\n") {
 
 $tokenizedText = join ("\n", @wordV);
 
-
-print "I've tokenized the text!!\n";
+print "I've tokenized the text!!\n" if ($silent==0);
 
 #POS-TAGGING OF TOKENS, USING HUNPOS HMM-TAGGER
 print WriterPOS $tokenizedText."\n\n";
@@ -125,7 +128,7 @@ while ((my $returnword = <ReaderPOS>) ne "\n") {
 
 }
 
-print "I've extracted the POS tags!!\n";
+print "I've extracted the POS tags!!\n" if ($silent==0);
 
 #Rhythmi-metrical scansion
 #Groves' rules
@@ -142,6 +145,7 @@ for (my $i=0; $i<scalar(@posV); $i++) {
     chomp ($returnword);
     if ($returnword ne "+?") {
       $firstStepRes[$i] = $returnword;
+      $secondStepRes[$i] = $returnword;
     }
     else { #PROBLEM: I don't know the stress pattern of word $wordV[$i]!
            #SOLUTION: I can search similar words using the closewordtest.fst transducer
@@ -157,9 +161,11 @@ for (my $i=0; $i<scalar(@posV); $i++) {
         chomp ($returnPrim);
         if ($returnPrim ne "+?") {
           $firstStepRes[$i] = $returnPrim;
+          $secondStepRes[$i] = $returnPrim;
         }
         else {
           $firstStepRes[$i] =  "?";
+          $secondStepRes[$i] =  "?";
         }
 
       }
@@ -167,23 +173,7 @@ for (my $i=0; $i<scalar(@posV); $i++) {
   }
 }
 
-print "I've done the first of the Groves' steps!\n";
-
-#2ND STEP
-for (my $i=0; $i<scalar(@posV); $i++) {
-  print WriterSecondary $firstStepRes[$i]."\n";
-  while ((my $returnword = <ReaderSecondary>) ne "\n") {
-    chomp ($returnword);
-    if ($returnword ne "+?") {
-      $secondStepRes[$i] = $returnword;
-    }
-    else {
-      $secondStepRes[$i] =  "?";
-    }
-  }
-}
-
-print "I've done the second of the Groves' step!!\n";
+print "I've applied the Groves' rules!\n" if ($silent==0);
 
 #CLEANUP STEP
 for (my $i=0; $i<scalar(@posV); $i++) {
@@ -199,7 +189,7 @@ for (my $i=0; $i<scalar(@posV); $i++) {
   }
 }
 
-print "CleanUp!!\n";
+print "CleanUp!!\n" if ($silent==0);
 
 $eachLine = "";
 my $eachText = "";
@@ -231,9 +221,9 @@ for (my $i=0; $i<scalar(@posV); $i++) {
 
 
 
-print "----------------------------ANALYSIS FINISHED------------------------------------\n";
-print "Press ENTER to continue...\n";
-<STDIN>;
+print "----------------------------ANALYSIS FINISHED------------------------------------\n" if ($silent==0);
+print "Press ENTER to continue...\n" if ($silent==0);
+<STDIN> if ($silent==0);
 
 
 #IKUSTEKO // VIEW
@@ -302,10 +292,11 @@ for (my $i=0; $i<scalar(@stressRes); $i++) {
 }
 print "\n" if ($numericView);
 
-
+my @normalizedStress;
 my $stress = "";
 for (my $i=0; $i<scalar(@stressRes); $i++) {
 	print $stressRes[$i]/$max." " if ($numericView);
+    $normalizedStress[$i] = $stressRes[$i]/$max;
 	if (($stressRes[$i]/$max) <= 0.5) {
 		$stress .= "_";
 	}
@@ -314,6 +305,11 @@ for (my $i=0; $i<scalar(@stressRes); $i++) {
 	}
 }
 print "\n\n" if ($numericView);
+
+#for (my $i=0; $i<scalar(@stressRes)-1; $i++) {
+#    print $normalizedStress[$i+1]-$normalizedStress[$i]."\n";
+#}
+#print "\n\n";
 
 my $oldStress = $stress;
 $stress =~ s/__*$/_/; #PROBLEM OF SINGLE LONG SENTENCES
@@ -381,8 +377,8 @@ my $stdDevInt = round($stdDev);
 
 
 
-print "Syllable emphasis $oldStress \n";
-print "Meter: ";
+print "Syllable emphasis $oldStress \n" if ($silent==0);
+print "Meter: " if ($silent==0);
 
 if (($maxname eq 'iamb') or ($maxname eq 'trochee')) {
 	if (($count{"iamb"} != 0) && ($count{"iamb"} == $count{"trochee"})) {
@@ -416,9 +412,9 @@ print "hexameter\n" if ($totalFeet == 6);
 print "heptameter\n" if ($totalFeet == 7);
 print "octameter\n" if ($totalFeet == 8);
 
-print "SUPER SYLLABLES (before): $oldStress\n";
+print "SUPER SYLLABLES (before): $oldStress\n" if ($silent==0);
 $oldStress =~ s/($struc{$maxname})_*$/$1/;
-print "SUPER SYLLABLES $struc{$maxname} (after): $oldStress\n";
+print "SUPER SYLLABLES $struc{$maxname} (after): $oldStress\n" if ($silent==0);
 
 print "\n" if ($additionalInformation);
 print "The poem has $nLines lines\n" if ($additionalInformation);
@@ -430,7 +426,7 @@ close(ReaderTokenizer); close(WriterTokenizer);
 close(ReaderPOS); close(WriterPOS);
 close(ReaderPrimary);close(WriterPrimary);
 close(ReaderPrimary2);close(WriterPrimary2);
-close(ReaderSecondary);close(WriterSecondary);
+#close(ReaderSecondary);close(WriterSecondary);
 close(ReaderClose);close(WriterClose);
 close(ReaderClean);close(WriterClean);
 
