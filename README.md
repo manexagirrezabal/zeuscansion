@@ -27,4 +27,4 @@ If we add the parameter "-n" ZeuScansion will show us the average stress value a
  For this information, just execute ZeuScansion with "-h" parameter to get this information in the terminal.
  
 ##References:
-Manex Agirrezabal, Aitzol Astigarraga, Bertol Arrieta, Mans Hulden (2015), ZeuScansion: A Tool for Scansion of English Poetry, In Journal of Language Modelling (http://jlm.ipipan.waw.pl/index.php/JLM/article/view/102)
+Manex Agirrezabal, Aitzol Astigarraga, Bertol Arrieta, Mans Hulden (2016), ZeuScansion: A Tool for Scansion of English Poetry, In Journal of Language Modelling (http://jlm.ipipan.waw.pl/index.php/JLM/article/view/102)
