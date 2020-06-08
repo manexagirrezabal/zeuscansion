@@ -4,12 +4,12 @@ ZeuScansion is a finite-state technology based system capable of performing metr
 ##Requirements
 The minimum software requirements for running ZeuScansion are:
 
-  * foma (http://foma.googlecode.com)
+  * foma (https://code.google.com/archive/p/foma/)
 
-  * hunpos (http://hunpos.googlecode.com) (trained with English Wall Street Journal corpus)
+  * hunpos (https://code.google.com/archive/p/hunpos/) (trained with English Wall Street Journal corpus)
   
 ##Minimum configuration
-The only thing that must be configured is the model for the English POS-tagger. The file location for the model trained using the Hunpos POS-tagger should be specified in the file "zeuscansion.conf". This model file is included in the hunpos repository, and it can be downloaded from this address (https://hunpos.googlecode.com/files/en_wsj.model.gz).
+The only thing that must be configured is the model for the English POS-tagger. The file location for the model trained using the Hunpos POS-tagger should be specified in the file "zeuscansion.conf". This model file is included in the hunpos repository, and it can be downloaded from this address (https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/hunpos/en_wsj.model.gz).
 
 ##Usage
 For scanning a poem, we just have to execute zeuscansion with the following parameters. This will give us the meter that ZeuScansion calculates for us:
